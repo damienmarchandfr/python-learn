@@ -2,12 +2,15 @@ from pygame.constants import K_LEFT, K_RIGHT
 import game
 import pygame
 from Controller import Controller
-
+import os
 from Player import Player
 pygame.init()
 
 screen = pygame.display.set_mode([500, 500])
+
 clock = pygame.time.Clock()
+game.PID = os.getpid()
+print('PID : '+ str(game.PID))
 
 running = True
 

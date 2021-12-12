@@ -59,6 +59,10 @@ class Player(pygame.sprite.Sprite):
         # IDLE default animation
         self.set_animation('idle')
 
+        self.collider = pygame.Rect(self.x,self.y,32,32)
+        self.collider.center = self.x,self.y
+
+
 
     def set_animation(self,animation : str):
         self.animation = animation
@@ -67,6 +71,16 @@ class Player(pygame.sprite.Sprite):
         self.frame_counter = 0       
 
     def draw(self,surface: pygame.Surface):
+        if game.DEBUG:
+            # Collision
+            color = (255,0,0)
+            pygame.draw.rect(surface, color, self.collider, 2)
+
+            # Sprite box
+            color=(153,153,255)
+            pygame.draw.rect(surface, color, self.rect, 2)
+
+
         self.frame_counter+=1
 
         if(self.frame_counter == self.animation_speed):
@@ -88,22 +102,26 @@ class Player(pygame.sprite.Sprite):
     def move(self):
         if self.running:
             self.x += int(self.speed * game.DT) * self.x_direction
+        self.collider.center = (self.x,self.y)
 
-    def run(self):
+    def _run(self):
         if self.running == False:
             self.set_animation('run')
         self.running = True
 
-    def set_idle(self):
+    def _set_idle(self):
         self.set_animation('idle')
         self.running = False
         self.jumping = False
         
     def set_action(self,action : str):
         if action is None:
-            self.set_idle()
+            self._set_idle()
         if action == 'right' or action == 'left':
             self.x_direction = 1 if action == 'right' else -1  
-            self.run()
-        if action == 'right_stop' or action == 'left_stop':
-            self.set_idle()
+            self._run()
+        if action == 'right_stop' and self.x_direction == 1:
+            self._set_idle()
+        if action == 'left_stop' and self.x_direction == -1:
+            self._set_idle()
+            
