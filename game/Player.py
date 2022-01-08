@@ -56,12 +56,14 @@ class Player(pygame.sprite.Sprite):
         self.y = y
         self.speed = 200
 
+        self.vertical_acceleration = 100
+        self.vertical_speed = 0
+
         # IDLE default animation
         self.set_animation('idle')
 
-        self.collider = pygame.Rect(self.x,self.y,32,32)
-        self.collider.center = self.x,self.y
-
+        self.collider = pygame.Rect(self.x,self.y,15,25)
+        self.collider.center = (self.x,self.y + 3)
 
 
     def set_animation(self,animation : str):
@@ -71,16 +73,7 @@ class Player(pygame.sprite.Sprite):
         self.frame_counter = 0       
 
     def draw(self,surface: pygame.Surface):
-        if game.DEBUG:
-            # Collision
-            color = (255,0,0)
-            pygame.draw.rect(surface, color, self.collider, 2)
-
-            # Sprite box
-            color=(153,153,255)
-            pygame.draw.rect(surface, color, self.rect, 2)
-
-
+        
         self.frame_counter+=1
 
         if(self.frame_counter == self.animation_speed):
@@ -99,10 +92,22 @@ class Player(pygame.sprite.Sprite):
         self.sprite_group.add(self)
         self.sprite_group.draw(surface)
 
+        if game.DEBUG:
+            # Collision
+            color = (255,0,0)
+            pygame.draw.rect(surface, color, self.collider, 1)
+
+            # Sprite box
+            # color=(153,153,255)
+            # pygame.draw.rect(surface, color, self.rect, 2)
+
     def move(self):
+        self.y += int(game.DT* self.vertical_acceleration) 
+        print(int(game.DT) *  self.vertical_acceleration)
+        
         if self.running:
             self.x += int(self.speed * game.DT) * self.x_direction
-        self.collider.center = (self.x,self.y)
+        self.collider.center = (self.x,self.y + 3)
 
     def _run(self):
         if self.running == False:
